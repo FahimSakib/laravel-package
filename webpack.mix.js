@@ -14,4 +14,5 @@ const mix = require('laravel-mix');
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .scripts(['resources/asset/js/custom/custom.js'],'public/js/custom.js')
+    .styles(['resources/asset/css/custom/custom.css'],'public/css/custom.css')
     .sourceMaps()
