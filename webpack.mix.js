@@ -16,3 +16,4 @@ mix.js('resources/js/app.js', 'public/js')
     .scripts(['resources/asset/js/custom/custom.js'],'public/js/custom.js')
     .styles(['resources/asset/css/custom/custom.css'],'public/css/custom.css')
     .sourceMaps()
+mix.browserSync('laravel-package.test/');
