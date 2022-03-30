@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
+use App\Imports\MultipleSheetImport;
 use Maatwebsite\Excel\Facades\Excel;
+
 
 class ExcelFileUploadController extends Controller
 {
@@ -15,7 +17,9 @@ class ExcelFileUploadController extends Controller
                 if($request->type == 1){
                     $result = Excel::import(new UsersImport,$request->file('excel'));
                 }else{
-                    //
+                    $import = new MultipleSheetImport();
+                    $import->onlySheets('users', 'roles');
+                    $result = Excel::import($import, $request->file('excel'));
                 }
                 if($result){
                     $output = ['status' => 'success', 'message' => 'data has been saved successfully'];
