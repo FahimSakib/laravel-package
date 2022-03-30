@@ -20,3 +20,5 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/invoice', [App\Http\Controllers\DOMPdfController::class, 'index'])->name('invoice');
+Route::get('/invoice-pdf/{type}', [App\Http\Controllers\DOMPdfController::class, 'pdf'])->name('invoice.pdf');
