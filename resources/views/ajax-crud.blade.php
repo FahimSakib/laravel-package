@@ -48,7 +48,7 @@
                                     </x-selectbox>
                                     <x-selectbox col="col-md-3" labelName="Status" name="status">
                                         <option value="1">Active</option>
-                                        <option value="0">In Active</option>
+                                        <option value="2">In Active</option>
                                     </x-selectbox>
                                     <div class="form-group col-md-3" style="padding-top: 22px">
                                         <button type="button" class="btn btn-success" id="btn-filter">Filter</button>
@@ -476,8 +476,48 @@
             backdrop: 'static',
         });
         $("#saveExcelModal .modal-title").text(title);
-        $("#saveExcelModal #save-btn").text(save);
+        $("#saveExcelModal #upload-btn").text(save);
     };
+
+    
+    $(document).on('click', '#upload-btn', function () {
+        let storeExcelForm = document.getElementById('storeExcelForm');
+        let formData = new FormData(storeExcelForm);
+        let url = "{{ route('excel.file.upload') }}";
+        store_excel_form_data(table,url, formData);
+    });
+
+    function store_excel_form_data(table,url, formData) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            cache: false,
+            success: function (data) {
+                $('#storeExcelForm').find('.is-invalid').removeClass('is-invalid');
+                $('#storeExcelForm').find('.error').remove();
+                if (data.status == false) {
+                    $.each(data.errors, function (key, value) {
+                        $('#storeExcelForm #' + key).addClass('is-invalid');
+                        $('#storeExcelForm #' + key).parent().append(
+                            '<div class="alert alert-danger mt-1 error">' + value + '</div>');
+                    });
+                } else {
+                    flashMessage(data.status, data.message);
+                    if (data.status == 'success') {
+                        table.ajax.reload();
+                        $("#saveExcelModal").modal('hide');
+                    }
+                }
+            },
+            error: function (xhr, ajaxOption, thrownError) {
+                console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
+            }
+        });
+    }
 
     function flashMessage(status, message) {
         toastr.options = {

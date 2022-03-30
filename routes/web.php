@@ -38,3 +38,7 @@ Route::group(['prefix' => 'user', 'as' => 'user.'], function(){
 });
 
 //ajax-crud end
+
+//excel file upload start:
+
+Route::post('excel-file-upload','ExcelFileUploadController@index')->name('excel.file.upload');
