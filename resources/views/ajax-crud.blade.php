@@ -11,6 +11,8 @@
                             Users List
                         </div>
                         <div class="col-md-2">
+                            <button class="btn btn-sm btn-success" onclick="showExcelModal('Add Excel file','Upload')"
+                                type="button">Add Excel File</button>
                             <button class="btn btn-sm btn-primary" onclick="showModal('Add New User','Save')"
                                 type="button">Add New</button>
                         </div>
@@ -83,6 +85,7 @@
 </div>
 @include('modal.modal-xl')
 @include('modal.modal-user-view')
+@include('modal.modal-excel')
 @endsection
 
 @push('style')
@@ -138,6 +141,7 @@
     input:checked+.slider {
         background-color: #5cb85c;
     }
+
     input:not(:checked)+.slider {
         background-color: #d9534f;
     }
@@ -160,6 +164,7 @@
     .slider.round:before {
         border-radius: 50%;
     }
+
 </style>
 @endpush
 
@@ -176,7 +181,7 @@
 
     var table;
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         table = $('#dataTable').DataTable({
             "processing": true,
             "serverSide": true,
@@ -198,25 +203,25 @@
             "ajax": {
                 "url": "{{ route('user.list') }}",
                 "type": "POST",
-                "data": function(data){
-                    data._token       = _token;
-                    data.name         = $('#form-filter #name').val();
-                    data.email        = $('#form-filter #email').val();
-                    data.mobile_no    = $('#form-filter #mobile_no').val();
-                    data.district_id  = $('#form-filter #district_id').val();
-                    data.upazila_id   = $('#form-filter #upazila_id').val();
-                    data.role_id      = $('#form-filter #role_id').val();
-                    data.status       = $('#form-filter #status').val();
+                "data": function (data) {
+                    data._token = _token;
+                    data.name = $('#form-filter #name').val();
+                    data.email = $('#form-filter #email').val();
+                    data.mobile_no = $('#form-filter #mobile_no').val();
+                    data.district_id = $('#form-filter #district_id').val();
+                    data.upazila_id = $('#form-filter #upazila_id').val();
+                    data.role_id = $('#form-filter #role_id').val();
+                    data.status = $('#form-filter #status').val();
                 }
             }
         });
     });
 
-    $('#btn-filter').click(function(){
+    $('#btn-filter').click(function () {
         table.ajax.reload();
     });
 
-    $('#btn-reset').click(function(){
+    $('#btn-reset').click(function () {
         $('#form-filter')[0].reset();
         table.ajax.reload();
     });
@@ -240,7 +245,7 @@
         $("#saveDataModal #save-btn").text(save);
     };
 
-    $(document).on('click', '#save-btn', function() {
+    $(document).on('click', '#save-btn', function () {
         let storeForm = document.getElementById('storeForm');
         let formData = new FormData(storeForm);
         let url = "{{ route('user.store') }}";
@@ -263,7 +268,7 @@
             contentType: false,
             processData: false,
             cache: false,
-            success: function(data) {
+            success: function (data) {
                 $('#storeForm').find('.is-invalid').removeClass('is-invalid');
                 $('#storeForm').find('.error').remove();
                 if (data.status == false) {
@@ -290,7 +295,7 @@
         });
     }
 
-    $(document).on('click', '.data_edit', function() {
+    $(document).on('click', '.data_edit', function () {
         let id = $(this).data('id');
         if (id) {
             $.ajax({
@@ -301,7 +306,7 @@
                     _token: _token
                 },
                 dataType: "JSON",
-                success: function(data) {
+                success: function (data) {
                     $('.password').parent().addClass('d-none');
                     $('.password_confirmation').parent().addClass('d-none');
                     $('#storeForm #update_id').val(data.id);
@@ -310,7 +315,7 @@
                     $('#storeForm #mobile_no').val(data.mobile_no);
                     $('#storeForm #mobile_no').val(data.mobile_no);
                     $('#storeForm #district_id').val(data.district_id);
-                    upazilaList(data.district_id,'storeForm');
+                    upazilaList(data.district_id, 'storeForm');
                     setTimeout(() => {
                         $('#storeForm #upazila_id').val(data.upazila_id);
                     }, 1000);
@@ -339,7 +344,7 @@
         };
     });
 
-    $(document).on('click', '.data_view', function() {
+    $(document).on('click', '.data_view', function () {
         let id = $(this).data('id');
         if (id) {
             $.ajax({
@@ -350,7 +355,7 @@
                     _token: _token
                 },
                 dataType: "JSON",
-                success: function(data) {
+                success: function (data) {
                     $('#view_data').html('');
                     $('#view_data').html(data.user_view);
 
@@ -361,19 +366,19 @@
                     $("#viewDataModal .modal-title").html('<i class="fa-solid fa-eye"></i><span> ' +
                         data.name + '\'s data</span>');
                 },
-                error: function(xhr, ajaxOption, thrownError) {
+                error: function (xhr, ajaxOption, thrownError) {
                     console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
                 }
             });
         };
     });
 
-    $(document).on('change', '.change_status', function() {
+    $(document).on('change', '.change_status', function () {
         let id = $(this).data('id');
         let status;
-        if($(this).is(':checked')){
+        if ($(this).is(':checked')) {
             status = 1;
-        }else{
+        } else {
             status = 2;
         }
         if (id && status) {
@@ -382,24 +387,24 @@
                 type: "POST",
                 data: {
                     id: id,
-                    status:status,
+                    status: status,
                     _token: _token
                 },
                 dataType: "JSON",
-                success: function(data) {
+                success: function (data) {
                     flashMessage(data.status, data.message);
-                    if(data.status == 'success'){
-                        table.ajax.reload(null,false);
+                    if (data.status == 'success') {
+                        table.ajax.reload(null, false);
                     }
                 },
-                error: function(xhr, ajaxOption, thrownError) {
+                error: function (xhr, ajaxOption, thrownError) {
                     console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
                 }
             });
         };
     });
 
-    $(document).on('click', '.data_delete', function() {
+    $(document).on('click', '.data_delete', function () {
         let id = $(this).data('id');
         let name = $(this).data('name');
         let url = "{{ route('user.delete') }}"
@@ -426,20 +431,20 @@
                         _token: _token
                     },
                     dataType: "JSON",
-                }).done(function(response) {
+                }).done(function (response) {
                     if (response.status == 'success') {
                         Swal.fire('Deleted', response.message).then(function () {
                             table.row(row).remove().draw(false);
                         });
                     }
-                }).fail(function(response) {
+                }).fail(function (response) {
                     Swal.fire('Oopss...', 'Something went wrong', 'error');
                 })
             }
         })
     }
 
-    function upazilaList(district_id,form) {
+    function upazilaList(district_id, form) {
         if (district_id) {
             $.ajax({
                 url: "{{ route('upazila.list') }}",
@@ -449,15 +454,29 @@
                     _token: _token
                 },
                 dataType: "JSON",
-                success: function(data) {
-                    $('#'+form+' #upazila_id').html('');
-                    $('#'+form+' #upazila_id').html(data);
+                success: function (data) {
+                    $('#' + form + ' #upazila_id').html('');
+                    $('#' + form + ' #upazila_id').html(data);
                 },
-                error: function(xhr, ajaxOption, thrownError) {
+                error: function (xhr, ajaxOption, thrownError) {
                     console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
                 }
             });
         };
+    };
+
+    function showExcelModal(title, save) {
+        $('#storeExcelForm')[0].reset();
+        $('#storeExcelForm').find('.is-invalid').removeClass('is-invalid');
+        $('#storeExcelForm').find('.error').remove();
+        $('.dropify-clear').trigger('click');
+
+        $("#saveExcelModal").modal('toggle', {
+            keyboard: false,
+            backdrop: 'static',
+        });
+        $("#saveExcelModal .modal-title").text(title);
+        $("#saveExcelModal #save-btn").text(save);
     };
 
     function flashMessage(status, message) {
@@ -479,7 +498,7 @@
             "hideMethod": "fadeOut"
         }
 
-        switch(status) {
+        switch (status) {
             case 'success':
                 toastr.success(message, 'SUCCESS');
                 break;
