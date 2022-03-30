@@ -34,7 +34,13 @@ class ExcelFileUploadController extends Controller
         return response()->json($output);
     }
 
-    public function export(){
-        return Excel::download(new UsersExport,'users.xlsx');
+    public function export(Request $request){
+        $data = [
+            'start'  => $request->get('start'),
+            'length' => $request->get('length'),
+            'column' => $request->get('column'),
+            'dir'    => $request->get('dir'),
+        ];
+        return Excel::download(new UsersExport($data),'users.xlsx');
     }
 }

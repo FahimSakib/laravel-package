@@ -522,7 +522,17 @@
     }
 
     $(document).on('click','#export-btn',function(){
-        let url = "{{ route('excel.file.export') }}";
+        let column = '';
+        let dir = '';
+        let start = table.page.info().start;
+        let length = table.page.len();
+        if(table.order().length == 1){
+            column = table.order()[0][0];
+            dir = table.order()[0][1];
+        }
+        let query = {start:start, length:length, column:column, dir:dir}
+        // console.log(query);
+        let url = "{{ route('excel.file.export') }}?"+$.param(query);
         window.open(url,'_blank');
     });
 
