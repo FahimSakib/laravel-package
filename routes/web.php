@@ -42,3 +42,4 @@ Route::group(['prefix' => 'user', 'as' => 'user.'], function(){
 //excel file upload start:
 
 Route::post('excel-file-upload','ExcelFileUploadController@index')->name('excel.file.upload');
+Route::get('excel-file-export','ExcelFileUploadController@export')->name('excel.file.export');

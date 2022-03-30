@@ -7,10 +7,12 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-md-10">
+                        <div class="col-md-9">
                             Users List
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-info" type="button" id="export-btn">Export Excel
+                                File</button>
                             <button class="btn btn-sm btn-success" onclick="showExcelModal('Add Excel file','Upload')"
                                 type="button">Add Excel File</button>
                             <button class="btn btn-sm btn-primary" onclick="showModal('Add New User','Save')"
@@ -479,15 +481,15 @@
         $("#saveExcelModal #upload-btn").text(save);
     };
 
-    
+
     $(document).on('click', '#upload-btn', function () {
         let storeExcelForm = document.getElementById('storeExcelForm');
         let formData = new FormData(storeExcelForm);
         let url = "{{ route('excel.file.upload') }}";
-        store_excel_form_data(table,url, formData);
+        store_excel_form_data(table, url, formData);
     });
 
-    function store_excel_form_data(table,url, formData) {
+    function store_excel_form_data(table, url, formData) {
         $.ajax({
             url: url,
             type: "POST",
@@ -518,6 +520,11 @@
             }
         });
     }
+
+    $(document).on('click','#export-btn',function(){
+        let url = "{{ route('excel.file.export') }}";
+        window.open(url,'_blank');
+    });
 
     function flashMessage(status, message) {
         toastr.options = {

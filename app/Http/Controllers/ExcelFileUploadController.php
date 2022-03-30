@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UsersExport;
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Imports\MultipleSheetImport;
@@ -31,5 +32,9 @@ class ExcelFileUploadController extends Controller
             }
         }
         return response()->json($output);
+    }
+
+    public function export(){
+        return Excel::download(new UsersExport,'users.xlsx');
     }
 }
